@@ -1,29 +1,17 @@
 # MicroPython TM1638 LED Driver
 
-A MicroPython library for LED&KEY modules with 8x 7-segment decimal LED modules, 8x individual LEDs and 8x switches using the TM1738 LED driver.
+A MicroPython library for LED&KEY modules with 8x 7-segment decimal LED modules, 8x individual LEDs and 8x switches using the TM1738 LED driver. Original author mcauser with some small mods to work on BBC microbit.
 
 ![demo](docs/demo.jpg)
 
-## Examples
-
-Copy the file to your device, using [ampy](https://github.com/adafruit/ampy), [rshell](https://github.com/dhylands/rshell), [webrepl](http://micropython.org/webrepl/) or compiling and deploying. eg.
-
-```
-$ ampy put tm1638.py
-```
 
 **Basic usage**
 
 ```python
-# Wemos D1 Mini / ESP8266
+# microbit
 import tm1638
-from machine import Pin
-tm = tm1638.TM1638(stb=Pin(13), clk=Pin(14), dio=Pin(12))
-
-# STM32F407VET6
-import tm1638
-from machine import Pin
-tm = tm1638.TM1638(stb=Pin('B4'), clk=Pin('B5'), dio=Pin('B6'))
+from microbit import *
+tm = tm1638.TM1638(pin15, pin14, pin13)
 
 # every 2nd LED on
 tm.leds(0b01010101)
@@ -36,7 +24,6 @@ tm.show('cool')
 tm.show('abcdefgh')
 tm.number(-1234567)
 tm.number(1234)
-tm.number(5678, 4)
 tm.hex(0xdeadbeef)
 
 # dim both LEDs and segments
@@ -207,24 +194,17 @@ scroll(string, delay=250)
 * [WeMos D1 Mini](https://www.aliexpress.com/store/product/D1-mini-Mini-NodeMcu-4M-bytes-Lua-WIFI-Internet-of-Things-development-board-based-ESP8266/1331105_32529101036.html) $6.36 AUD
 * [LED&KEY TM1638 Module](https://www.aliexpress.com/item/TM1638-Module-Key-Display-For-AVR-Arduino-New-8-Bit-Digital-LED-Tube-8-Bit-TM1638/32805933184.html) $2.30 AUD
 * [Female-Female Dupont wires](https://www.aliexpress.com/item/10pcs-10cm-2-54mm-1p-1p-Pin-Male-to-Male-Color-Breadboard-Cable-Jump-Wire-Jumper/32636873838.html) $0.62 AUD
+* [microbit](https://thepihut.com/products/micro-bit-v2)  ~ £15
 
 ## Connections
 
-WeMos D1 Mini | LED&KEY TM1638 Module
-------------- | -----------------
-3V3 (or 5V)   | VCC
-G             | GND
-D7 (GPIO13)   | STB
-D5 (GPIO14)   | CLK
-D6 (GPIO12)   | DIO
-
-STM32F407VET6 | LED&KEY TM1638 Module
+microbit      | LED&KEY TM1638 Module
 ------------- | -----------------
 3V3           | VCC
-G             | GND
-B4            | STB
-B5            | CLK
-B6            | DIO
+0V            | GND
+15            | STB
+14            | CLK
+13            | DIO
 
 ## Links
 
@@ -233,7 +213,8 @@ B6            | DIO
 * [TM1638 datasheet](http://titanmec.com/index.php/en/project/download/id/303.html)
 * [Titan Micro TM1638 product page](http://titanmec.com/index.php/en/project/view/id/303.html)
 * [Adafruit Ampy](https://learn.adafruit.com/micropython-basics-load-files-and-run-code/install-ampy)
-
+* [micropython for microbit](https://microbit-micropython.readthedocs.io/en/latest/index.html)
+* 
 ## License
 
 Licensed under the [MIT License](http://opensource.org/licenses/MIT).
