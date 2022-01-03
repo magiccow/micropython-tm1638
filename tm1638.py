@@ -2,8 +2,8 @@
 # 8x push buttons
 
 from micropython import const
-from machine import Pin
-from time import sleep_us, sleep_ms
+from microbit import *
+from time import sleep_ms
 
 TM1638_CMD1 = const(64)  # 0x40 data command
 TM1638_CMD2 = const(192) # 0xC0 address command
@@ -18,6 +18,7 @@ _SEGMENTS = bytearray(b'\x3F\x06\x5B\x4F\x66\x6D\x7D\x07\x7F\x6F\x77\x7C\x39\x5E
 class TM1638(object):
     """Library for the TM1638 LED display driver."""
     def __init__(self, stb, clk, dio, brightness=7):
+        """ stb, clk, dio are of type MicroBitDigitalPin """
         self.stb = stb
         self.clk = clk
         self.dio = dio
@@ -28,9 +29,9 @@ class TM1638(object):
 
         self._on = TM1638_DSP_ON
 
-        self.clk.init(Pin.OUT, value=1)
-        self.dio.init(Pin.OUT, value=0)
-        self.stb.init(Pin.OUT, value=1)
+        self.clk.write_digital(1)
+        self.dio.write_digital(0)
+        self.stb.write_digital(1)
 
         self.clear()
         self._write_dsp_ctrl()
@@ -48,26 +49,27 @@ class TM1638(object):
         self._command(TM1638_CMD3 | self._on | self._brightness)
 
     def _command(self, cmd):
-        self.stb(0)
+        """ send command out to tm1638 via dio """
+        self.stb.write_digital(0)
         self._byte(cmd)
-        self.stb(1)
+        self.stb.write_digital(1)
 
     def _byte(self, b):
+        """ shift 8 bits of b out to dio, LSB first """
         for i in range(8):
-            self.clk(0)
-            self.dio((b >> i) & 1)
-            self.clk(1)
+            self.clk.write_digital(0)            
+            self.dio.write_digital((b >> i) & 1)
+            self.clk.write_digital(1)
 
     def _scan_keys(self):
         """Reads one of the four bytes representing which keys are pressed."""
         pressed = 0
-        self.dio.init(Pin.IN, Pin.PULL_UP)
+        self.dio.set_pull(self.dio.PULL_UP)
         for i in range(8):
-            self.clk(0)
-            if self.dio.value():
+            self.clk.write_digital(0)
+            if self.dio.read_digital():
                 pressed |= 1 << i
-            self.clk(1)
-        self.dio.init(Pin.OUT)
+            self.clk.write_digital(1)
         return pressed
 
     def power(self, val=None):
@@ -91,11 +93,11 @@ class TM1638(object):
     def clear(self):
         """Write zeros to each address"""
         self._write_data_cmd()
-        self.stb(0)
+        self.stb.write_digital(0)
         self._set_address(0)
         for i in range(16):
             self._byte(0x00)
-        self.stb(1)
+        self.stb.write_digital(1)
 
     def write(self, data, pos=0):
         """Write to all 16 addresses from a given position.
@@ -103,11 +105,11 @@ class TM1638(object):
         if not 0 <= pos <= 15:
             raise ValueError("Position out of range")
         self._write_data_cmd()
-        self.stb(0)
+        self.stb.write_digital(0)
         self._set_address(pos)
         for b in data:
             self._byte(b)
-        self.stb(1)
+        self.stb.write_digital(1)
 
     def led(self, pos, val):
         """Set the value of a single LED"""
@@ -119,11 +121,11 @@ class TM1638(object):
         self._write_data_cmd()
         pos = 1
         for i in range(8):
-            self.stb(0)
+            self.stb.write_digital(0)            
             self._set_address(pos)
             self._byte((val >> i) & 1)
             pos += 2
-            self.stb(1)
+            self.stb.write_digital(1)
 
     def segments(self, segments, pos=0):
         """Set one or more segments at a relative position.
@@ -132,20 +134,21 @@ class TM1638(object):
             raise ValueError("Position out of range")
         self._write_data_cmd()
         for seg in segments:
-            self.stb(0)
+            self.stb.write_digital(0)
             self._set_address(pos << 1)
             self._byte(seg)
             pos += 1
-            self.stb(1)
+            self.stb.write_digital(1)
 
     def keys(self):
         """Return a byte representing which keys are pressed. LSB is SW1"""
         keys = 0
-        self.stb(0)
+        self.stb.write_digital(0)        
         self._byte(TM1638_CMD1 | TM1638_READ)
+
         for i in range(4):
             keys |= self._scan_keys() << i
-        self.stb(1)
+        self.stb.write_digital(1)
         return keys
 
     def encode_digit(self, digit):
@@ -194,11 +197,6 @@ class TM1638(object):
         num = max(-9999999, min(num, 99999999))
         string = '{0: >8d}'.format(num)
         self.segments(self.encode_string(string))
-
-    #def float(self, num):
-    #    # needs more work
-    #    string = '{0:>9f}'.format(num)
-    #    self.segments(self.encode_string(string[0:9]))
 
     def temperature(self, num, pos=0):
         """Displays 2 digit temperature followed by degrees C"""
