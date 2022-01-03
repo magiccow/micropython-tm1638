@@ -2,7 +2,7 @@
 
 A MicroPython library for LED&KEY modules with 8x 7-segment decimal LED modules, 8x individual LEDs and 8x switches using the TM1738 LED driver. Original author mcauser with some small mods to work on BBC microbit.
 
-![demo](docs/demo.jpg)
+![demo](docs/demo-microbit.jpg)
 
 
 **Basic usage**
@@ -196,6 +196,8 @@ scroll(string, delay=250)
 * [Female-Female Dupont wires](https://www.aliexpress.com/item/10pcs-10cm-2-54mm-1p-1p-Pin-Male-to-Male-Color-Breadboard-Cable-Jump-Wire-Jumper/32636873838.html) $0.62 AUD
 * [microbit](https://thepihut.com/products/micro-bit-v2)  ~ £15
 
+
+
 ## Connections
 
 microbit      | LED&KEY TM1638 Module
@@ -214,7 +216,7 @@ microbit      | LED&KEY TM1638 Module
 * [Titan Micro TM1638 product page](http://titanmec.com/index.php/en/project/view/id/303.html)
 * [Adafruit Ampy](https://learn.adafruit.com/micropython-basics-load-files-and-run-code/install-ampy)
 * [micropython for microbit](https://microbit-micropython.readthedocs.io/en/latest/index.html)
-* 
+ 
 ## License
 
 Licensed under the [MIT License](http://opensource.org/licenses/MIT).
