@@ -4,6 +4,8 @@ A MicroPython library for LED&KEY modules with 8x 7-segment decimal LED modules,
 
 ![demo](docs/demo-microbit.jpg)
 
+See YouTube video at: https://youtu.be/GM7wLxX4UQk
+
 
 **Basic usage**
 
